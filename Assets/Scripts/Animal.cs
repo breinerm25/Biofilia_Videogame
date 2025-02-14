@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class Animal : MonoBehaviour
 {
-    [TextArea(2, 4)]
-    public string animalDescription; // Descripción del animal
-    public int scoreValue = 100; // Puntos otorgados por la foto
+    public string animalDescription;
+    public int scoreValue;
+    public AudioSource animalAudioSource; // Cada animal tiene su propio AudioSource
 }
+
+
 

@@ -18,6 +18,9 @@ public class PhotoCapture : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI animalDescriptionText; // Texto que muestra la descripción del animal
 
+    [Header("Audio")]
+    public AudioSource shutterSound; // Sonido del obturador de la cámara
+
     private int totalScore = 0;
     private bool isCapturing = false;
 
@@ -30,6 +33,9 @@ public class PhotoCapture : MonoBehaviour
 
     void Update()
     {
+        // Evita tomar fotos si el juego está pausado
+        if (Time.timeScale == 0f) return;
+
         if (photoCamera.enabled && !isCapturing && Input.GetMouseButtonDown(0))
         {
             StartCoroutine(TakePhoto());
@@ -44,6 +50,12 @@ public class PhotoCapture : MonoBehaviour
         isCapturing = true;
         StartCoroutine(CaptureEffect());
 
+        // Reproducir sonido de la cámara
+        if (shutterSound != null)
+        {
+            shutterSound.Play();
+        }
+
         List<Animal> detectedAnimals = DetectAnimals();
 
         if (detectedAnimals.Count > 0)
@@ -52,7 +64,10 @@ public class PhotoCapture : MonoBehaviour
             totalScore += photoScore;
             UpdateScoreUI();
 
-            ShowAnimalDescription(detectedAnimals[0]); // Mostrar descripción del primer animal detectado
+            // Reproducir sonido del primer animal detectado (si tiene un AudioSource)
+            PlayAnimalSound(detectedAnimals[0]);
+
+            ShowAnimalDescription(detectedAnimals[0]); // Mostrar descripción del animal
             yield return StartCoroutine(CaptureScreenshot(1920, 1080));
         }
         else
@@ -62,6 +77,14 @@ public class PhotoCapture : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         isCapturing = false;
+    }
+
+    void PlayAnimalSound(Animal animal)
+    {
+        if (animal.animalAudioSource != null && !animal.animalAudioSource.isPlaying)
+        {
+            animal.animalAudioSource.Play();
+        }
     }
 
     List<Animal> DetectAnimals()
