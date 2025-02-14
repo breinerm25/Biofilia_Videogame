@@ -1,7 +1,8 @@
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class PauseMenu : MonoBehaviour
 {
+    public string nombreEscena;
     public GameObject pausePanel; // Arrastra el Panel aquí en el Inspector
 
     private bool isPaused = false;
@@ -44,7 +45,8 @@ public class PauseMenu : MonoBehaviour
 
     public void QuitGame()
     {
+        SceneManager.LoadScene(nombreEscena);
         Time.timeScale = 1f; // Asegurar que el tiempo vuelve a la normalidad antes de salir
-        Application.Quit(); // Cierra la aplicación
+        
     }
 }
