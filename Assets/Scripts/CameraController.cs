@@ -1,11 +1,13 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour
 {
     public Camera playerCamera;  // Cámara del jugador
     public Camera photoCamera;   // Cámara fotográfica
     public float mouseSensitivity = 100f; // Sensibilidad del mouse
+    public Image hudCamera;
 
     [Header("Zoom Settings")]
     public float zoomSpeed = 5f; // Velocidad del zoom
@@ -27,6 +29,7 @@ public class CameraController : MonoBehaviour
         Cursor.visible = false; // Ocultar cursor al iniciar el juego
         fadeCanvasGroup.alpha = 0; // Asegurar que el fade empieza invisible
         targetZoom = photoCamera.fieldOfView; // Iniciar con el zoom normal
+        hudCamera.gameObject.SetActive(false); // HUD oculto al inicio
 
         // Activamos solo la cámara del jugador al inicio
         playerCamera.gameObject.SetActive(true);
@@ -57,7 +60,7 @@ public class CameraController : MonoBehaviour
         photoCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
     }
 
-    void HandleZoom()
+    public void HandleZoom()
     {
         if (isPhotoMode) // Solo permitir zoom en la cámara fotográfica
         {
@@ -65,6 +68,7 @@ public class CameraController : MonoBehaviour
             targetZoom -= scroll * zoomSpeed;
             targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
             photoCamera.fieldOfView = Mathf.Lerp(photoCamera.fieldOfView, targetZoom, Time.deltaTime * 10f);
+          
         }
     }
 
@@ -79,6 +83,9 @@ public class CameraController : MonoBehaviour
         isPhotoMode = !isPhotoMode;
         playerCamera.gameObject.SetActive(!isPhotoMode);
         photoCamera.gameObject.SetActive(isPhotoMode);
+
+        // Activar el HUD de la cámara solo en modo foto
+        hudCamera.gameObject.SetActive(isPhotoMode);
 
         // Hacer Fade Out (pantalla negra desaparece)
         yield return StartCoroutine(Fade(0));
