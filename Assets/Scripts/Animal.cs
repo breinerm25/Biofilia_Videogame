@@ -4,7 +4,9 @@ public class Animal : MonoBehaviour
 {
     public string animalDescription;
     public int scoreValue;
-    public AudioSource animalAudioSource; // Cada animal tiene su propio AudioSource
+    public AudioSource animalAudioSource;
+    public float duracion;
+    public bool fotografiado = false;
 }
 
 
