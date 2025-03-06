@@ -9,3 +9,4 @@
 *.diff filter=lfs diff=lfs merge=lfs -text
 =======
 >>>>>>> 1281f51 (Escena Inicio sin HDR)
+*.exr filter=lfs diff=lfs merge=lfs -text
