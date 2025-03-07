@@ -7921,6 +7921,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animalDescription: Rana verde
   scoreValue: 10
+  animalAudioSource: {fileID: 0}
 --- !u!65 &412935700
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20014,6 +20015,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animalDescription: Rana verde
   scoreValue: 10
+  animalAudioSource: {fileID: 0}
 --- !u!65 &706250358
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24678,6 +24680,7 @@ MonoBehaviour:
   captureEffect: {fileID: 1092359954}
   scoreText: {fileID: 14962034}
   animalDescriptionText: {fileID: 1699327085}
+  shutterSound: {fileID: 0}
 --- !u!114 &925054380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24698,6 +24701,9 @@ MonoBehaviour:
   - {fileID: 587103695}
   - {fileID: 1598868662}
   speed: 2
+  audioSource: {fileID: 0}
+  startSound: {fileID: 0}
+  endSound: {fileID: 0}
 --- !u!1001 &925524053
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26700,6 +26706,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b8fd8189c82f841a9e4e805b56c03d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nombreEscena: 
   pausePanel: {fileID: 2087065238}
 --- !u!1001 &1048970307
 PrefabInstance:
@@ -27395,6 +27402,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animalDescription: Mariposa Azul
   scoreValue: 100
+  animalAudioSource: {fileID: 0}
 --- !u!65 &1066121460
 BoxCollider:
   m_ObjectHideFlags: 0
