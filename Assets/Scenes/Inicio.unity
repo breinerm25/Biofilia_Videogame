@@ -527577,7 +527577,7 @@ MonoBehaviour:
   focusImageComponent: {fileID: 681302277}
   flashOrigin: {fileID: 998471361}
   flashSound: {fileID: 5946841101773952504}
-  nextSceneName: Mapa lvl 1
+  nextSceneName: CambiosMecanicas
   focusMovementScript: {fileID: 1763516803}
   focusScale: 55
   focusDuration: 0.5
