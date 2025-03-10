@@ -1,138 +1,132 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using System.IO;
 using TMPro;
+using UnityEngine.InputSystem;
+using System.IO;
 
 public class HacerFotos : MonoBehaviour
 {
     public Camera photoCamera;
     public LayerMask animalLayer;
-    public RectTransform apuntadorJugador1; // 🎯 Puntero del Jugador 1
-    public RectTransform apuntadorJugador2; // 🎯 Puntero del Jugador 2
+    public RectTransform apuntadorJugador1;
+    public RectTransform apuntadorJugador2;
     public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI descriptionText;
-    public TextMeshProUGUI photosRemainingText; // 📷 UI para mostrar fotos restantes
+    public TextMeshProUGUI photosRemainingText;
     public AudioSource cameraSound;
-    public Image previewImage; // 📸 Imagen en la UI (parte inferior izquierda)
-    public CanvasGroup previewCanvasGroup; // 🎭 Para ocultar/mostrar la foto en UI
-    public int photoSize = 300; // 📏 Tamaño del recorte de la foto
-    public int maxPhotos = 7; // 📷 Cantidad inicial de fotos
-    public float photoCooldown = 1.5f; // ⏳ Tiempo de espera entre fotos
+    public Image previewImage;
+    public CanvasGroup previewCanvasGroup;
+    public int maxPhotos = 7;
+    public float photoCooldown = 1.5f;
+    public InputActionReference shootActionPlayer1;
+    public InputActionReference shootActionPlayer2;
 
     private int totalScore = 0;
     private int photosRemaining;
     private bool canTakePhoto = true;
+    private Animal objetivoJugador1;
+    private Animal objetivoJugador2;
 
     void Start()
     {
-        photosRemaining = maxPhotos; // 📷 Inicializa con 7 fotos disponibles
+        photosRemaining = maxPhotos;
         UpdateUI();
     }
 
     void Update()
     {
+        objetivoJugador1 = DetectarAnimal(apuntadorJugador1);
+        objetivoJugador2 = DetectarAnimal(apuntadorJugador2);
+
         if (canTakePhoto && photosRemaining > 0)
         {
-            if (Input.GetMouseButtonDown(0)) // Jugador 1 (Click Izquierdo)
+            if (shootActionPlayer1.action.WasPressedThisFrame()) // Jugador 1
             {
-                StartCoroutine(TakePhoto(apuntadorJugador1));
+                StartCoroutine(TakePhoto(apuntadorJugador1, objetivoJugador1));
             }
-            else if (Input.GetKeyDown(KeyCode.Space)) // Jugador 2 (Espacio)
+            else if (shootActionPlayer2.action.WasPressedThisFrame()) // Jugador 2
             {
-                StartCoroutine(TakePhoto(apuntadorJugador2));
+                StartCoroutine(TakePhoto(apuntadorJugador2, objetivoJugador2));
             }
         }
     }
 
-    IEnumerator TakePhoto(RectTransform apuntador)
+    Animal DetectarAnimal(RectTransform apuntador)
     {
-        canTakePhoto = false; // 🛑 Evita que se spameen fotos
-
-        Vector3 screenPos = apuntador.position; // 📍 Posición del puntero en la pantalla
+        Vector3 screenPos = apuntador.position;
         Ray ray = photoCamera.ScreenPointToRay(screenPos);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, 100f, animalLayer))
         {
-            Animal animal = hit.collider.GetComponent<Animal>();
+            return hit.collider.GetComponent<Animal>();
+        }
+        return null;
+    }
 
-            if (animal != null)
+    IEnumerator TakePhoto(RectTransform apuntador, Animal animal)
+    {
+        canTakePhoto = false;
+        photosRemaining--;
+
+        if (animal != null)
+        {
+            int puntos = EvaluarPuntaje(animal, apuntador);
+            totalScore += puntos;
+            Debug.Log($"Foto tomada: {animal.name}, Puntaje: {puntos}");
+            if (animal.animalAudioSource != null)
             {
-                totalScore += animal.scoreValue;
-                photosRemaining--; // 📸 Reducir el contador de fotos
-
-                UpdateUI(); // 🔄 Actualizar puntaje y fotos restantes en UI
-
-                if (animal.animalAudioSource != null)
-                {
-                    animal.animalAudioSource.Play();
-                }
-
-                if (cameraSound != null)
-                {
-                    cameraSound.Play();
-                }
-
-                StartCoroutine(CaptureScreenshot(animal, apuntador));
+                animal.animalAudioSource.Play();
             }
         }
+        else
+        {
+            Debug.Log("Foto fallida: No había objetivo válido.");
+        }
 
+        if (cameraSound != null)
+        {
+            cameraSound.Play();
+        }
+
+        yield return CaptureScreenshot();
+        UpdateUI();
         yield return new WaitForSeconds(photoCooldown);
-        canTakePhoto = true; // ✅ Permitir tomar otra foto después del cooldown
+        canTakePhoto = true;
+    }
+
+    int EvaluarPuntaje(Animal animal, RectTransform apuntador)
+    {
+        float distancia = Vector3.Distance(apuntador.position, Camera.main.WorldToScreenPoint(animal.transform.position));
+        if (distancia < 20f) return animal.scoreValue * 2; // Excelente
+        if (distancia < 50f) return animal.scoreValue; // Bueno
+        return 0; // Fallo
     }
 
     void UpdateUI()
     {
-        if (scoreText != null)
-        {
-            scoreText.text = $"Puntos: {totalScore}";
-        }
-
-        if (photosRemainingText != null)
-        {
-            photosRemainingText.text = $"Fotos restantes: {photosRemaining}";
-        }
+        scoreText.text = $"Puntos: {totalScore}";
+        photosRemainingText.text = $"Fotos restantes: {photosRemaining}";
     }
 
-    IEnumerator CaptureScreenshot(Animal animal, RectTransform apuntador)
+    IEnumerator CaptureScreenshot()
     {
         yield return new WaitForEndOfFrame();
 
-        // 🖼 Crear RenderTexture para capturar
         RenderTexture rt = new RenderTexture(Screen.width, Screen.height, 24);
         photoCamera.targetTexture = rt;
         photoCamera.Render();
 
-        // 🎯 Posición del puntero en coordenadas de pantalla
-        Vector3 pointerPos = apuntador.position;
-        int x = Mathf.Clamp((int)(pointerPos.x - (photoSize / 2)), 0, Screen.width - photoSize);
-        int y = Mathf.Clamp((int)(pointerPos.y - (photoSize / 2)), 0, Screen.height - photoSize);
-
-        // 📷 Capturar solo el área alrededor del apuntador
-        Texture2D screenShot = new Texture2D(photoSize, photoSize, TextureFormat.RGB24, false);
+        Texture2D screenShot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
         RenderTexture.active = rt;
-        screenShot.ReadPixels(new Rect(x, y, photoSize, photoSize), 0, 0);
+        screenShot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
         screenShot.Apply();
 
-        // 📜 Guardar la imagen en la carpeta "Fotos" dentro de Assets
-        string folderPath = Path.Combine(Application.dataPath, "Fotos");
-        if (!Directory.Exists(folderPath))
-        {
-            Directory.CreateDirectory(folderPath);
-        }
-
-        string filePath = Path.Combine(folderPath, $"Foto_{System.DateTime.Now:yyyy-MM-dd_HH-mm-ss}.png");
-        File.WriteAllBytes(filePath, screenShot.EncodeToPNG());
-        Debug.Log($"📸 Captura guardada en: {filePath}");
-
-        // 🖼 Mostrar la foto en la UI
-        MostrarFotoEnUI(screenShot, animal.duracion);
-
-        // 🧹 Limpiar memoria
         photoCamera.targetTexture = null;
         RenderTexture.active = null;
         Destroy(rt);
+
+        MostrarFotoEnUI(screenShot, 2f);
     }
 
     void MostrarFotoEnUI(Texture2D foto, float duracion)
@@ -143,8 +137,8 @@ public class HacerFotos : MonoBehaviour
 
     IEnumerator FotoEnUI(float duracion)
     {
-        previewCanvasGroup.alpha = 1; // 📸 Mostrar la foto
+        previewCanvasGroup.alpha = 1;
         yield return new WaitForSeconds(duracion);
-        previewCanvasGroup.alpha = 0; // ❌ Ocultar después del tiempo
+        previewCanvasGroup.alpha = 0;
     }
 }

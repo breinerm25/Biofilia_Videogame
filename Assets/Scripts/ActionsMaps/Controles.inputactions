@@ -1,0 +1,113 @@
+{
+    "name": "Controles",
+    "maps": [
+        {
+            "name": "Jugador",
+            "id": "9f901dc1-92f5-4bb5-8863-6a01e6eb450c",
+            "actions": [
+                {
+                    "name": "MoverJugador1",
+                    "type": "Value",
+                    "id": "6475e2e1-46a3-4d1e-abc8-5b9db4dca6dd",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MoverJugador2",
+                    "type": "Value",
+                    "id": "433f2af4-fab7-48d7-a47f-d3ee79cd67c6",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "TomarFoto",
+                    "type": "Button",
+                    "id": "ee45cb60-7ba1-4389-8937-09d874a831c0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b970b899-feb6-475f-9b11-41793d57c04c",
+                    "path": "<XInputController>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Jugador1",
+                    "action": "MoverJugador1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0cd4fde6-55cf-422d-86cd-0d4664b48407",
+                    "path": "<SwitchProControllerHID>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Jugador1",
+                    "action": "MoverJugador2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "138b2377-51a5-4564-be20-aa4ad052e339",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Jugador1",
+                    "action": "TomarFoto",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bf162c9c-7efa-436d-ab23-102855d86ba9",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TomarFoto",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Jugador1",
+            "bindingGroup": "Jugador1",
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<SwitchProControllerHID>",
+                    "isOptional": true,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Jugador2",
+            "bindingGroup": "Jugador2",
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}
