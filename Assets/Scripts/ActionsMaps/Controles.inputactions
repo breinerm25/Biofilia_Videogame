@@ -24,9 +24,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "TomarFoto",
+                    "name": "TomarFotoJugador1",
                     "type": "Button",
                     "id": "ee45cb60-7ba1-4389-8937-09d874a831c0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "TomarFotoJugador2",
+                    "type": "Button",
+                    "id": "26a3e8c3-1827-47a6-b68d-87a7ba1b7136",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -59,22 +68,22 @@
                 {
                     "name": "",
                     "id": "138b2377-51a5-4564-be20-aa4ad052e339",
-                    "path": "<Gamepad>/rightTrigger",
+                    "path": "<XInputController>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Jugador1",
-                    "action": "TomarFoto",
+                    "action": "TomarFotoJugador1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "bf162c9c-7efa-436d-ab23-102855d86ba9",
-                    "path": "<Gamepad>/rightTrigger",
+                    "id": "e7a2dff5-5d13-4004-9624-a8457378a3bc",
+                    "path": "<SwitchProControllerHID>/rightTrigger",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "TomarFoto",
+                    "groups": ";Jugador2",
+                    "action": "TomarFotoJugador2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
