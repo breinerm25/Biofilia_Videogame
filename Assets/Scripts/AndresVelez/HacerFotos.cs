@@ -6,29 +6,32 @@ using UnityEngine.InputSystem;
 
 public class HacerFotos : MonoBehaviour
 {
-    public int jugadorID = 1; // Se configura en el Inspector (Jugador 1 o Jugador 2)
+    public int jugadorID = 1;
     public Camera photoCamera;
     public LayerMask animalLayer;
     public RectTransform apuntador;
     public TextMeshProUGUI photosRemainingText;
+    public TextMeshProUGUI animalNameText; // Texto para mostrar el nombre del animal
     public InputActionReference shootAction;
     public AudioSource cameraSound;
-    public static int totalScore = 0; // Puntaje compartido para ambos jugadores
+    public static int totalScore = 0;
     public TextMeshProUGUI scoreText;
-    public Image previewImage; // Imagen para mostrar la foto tomada
+    public Image previewImage;
     public CanvasGroup previewCanvasGroup;
+    public Canvas uiCanvas; // Referencia al Canvas de la UI
     public int maxPhotos = 7;
     public float photoCooldown = 1.5f;
     public float rechargeTime = 5f;
-    public float previewDuration = 2f; // Duración de la imagen en pantalla
+    public float previewDuration = 2f;
 
-    private int photosRemaining; // Independiente para cada jugador
-    private bool canTakePhoto = true; // Independiente para cada jugador
-    private bool isReloading = false; // Independiente para cada jugador
+    private int photosRemaining;
+    private bool canTakePhoto = true;
+    private bool isReloading = false;
+    private int fotoSize = 200;
 
     void Start()
     {
-        photosRemaining = maxPhotos; // Cada jugador empieza con su cantidad de fotos
+        photosRemaining = maxPhotos;
         UpdateUI();
     }
 
@@ -50,16 +53,24 @@ public class HacerFotos : MonoBehaviour
     IEnumerator TakePhoto()
     {
         canTakePhoto = false;
-        photosRemaining--; // Solo se reduce para este jugador
+        photosRemaining--;
 
         Animal animal = DetectarAnimal();
         if (animal != null)
         {
             totalScore += EvaluarPuntaje(animal);
+
+            if (!animal.fotografiado) // Solo reproduce el audio la primera vez
+            {
+                animal.fotografiado = true;
+                animal.animalAudioSource?.Play();
+            }
+
+            MostrarNombreAnimal(animal.nombreAnimal);
         }
 
         cameraSound?.Play();
-        yield return CaptureScreenshot(); // Captura la foto
+        yield return CaptureScreenshot();
         UpdateUI();
         yield return new WaitForSeconds(photoCooldown);
         canTakePhoto = true;
@@ -85,7 +96,7 @@ public class HacerFotos : MonoBehaviour
         Ray ray = photoCamera.ScreenPointToRay(screenPos);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 100f, animalLayer))
+        if (Physics.Raycast(ray, out hit, 20f, animalLayer))
         {
             return hit.collider.GetComponent<Animal>();
         }
@@ -94,10 +105,7 @@ public class HacerFotos : MonoBehaviour
 
     int EvaluarPuntaje(Animal animal)
     {
-        float distancia = Vector3.Distance(apuntador.position, Camera.main.WorldToScreenPoint(animal.transform.position));
-        if (distancia < 20f) return animal.scoreValue * 2;
-        if (distancia < 50f) return animal.scoreValue;
-        return 0;
+        return animal.scoreValue;
     }
 
     void UpdateUI()
@@ -109,20 +117,31 @@ public class HacerFotos : MonoBehaviour
     IEnumerator CaptureScreenshot()
     {
         yield return new WaitForEndOfFrame();
-        RenderTexture rt = new RenderTexture(Screen.width, Screen.height, 24);
-        photoCamera.targetTexture = rt;
-        photoCamera.Render();
 
-        Texture2D screenShot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-        RenderTexture.active = rt;
-        screenShot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-        screenShot.Apply();
+        // Desactivar la UI antes de la captura
+        uiCanvas.enabled = false;
 
-        photoCamera.targetTexture = null;
-        RenderTexture.active = null;
-        Destroy(rt);
+        yield return new WaitForEndOfFrame(); // Esperar un frame para asegurar que la UI desaparezca
 
-        MostrarFotoEnUI(screenShot);
+        // Capturar la pantalla sin la UI
+        Texture2D fullScreenshot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+        fullScreenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        fullScreenshot.Apply();
+
+        // Reactivar la UI después de la captura
+        uiCanvas.enabled = true;
+
+        // Recortar el área de la mira
+        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(null, apuntador.position);
+        int x = Mathf.Clamp((int)screenPos.x - (fotoSize / 2), 0, Screen.width - fotoSize);
+        int y = Mathf.Clamp((int)screenPos.y - (fotoSize / 2), 0, Screen.height - fotoSize);
+
+        Texture2D croppedScreenshot = new Texture2D(fotoSize, fotoSize);
+        croppedScreenshot.SetPixels(fullScreenshot.GetPixels(x, y, fotoSize, fotoSize));
+        croppedScreenshot.Apply();
+
+        Destroy(fullScreenshot); // Liberar memoria
+        MostrarFotoEnUI(croppedScreenshot);
     }
 
     void MostrarFotoEnUI(Texture2D foto)
@@ -136,5 +155,17 @@ public class HacerFotos : MonoBehaviour
         previewCanvasGroup.alpha = 1;
         yield return new WaitForSeconds(previewDuration);
         previewCanvasGroup.alpha = 0;
+    }
+
+    void MostrarNombreAnimal(string nombre)
+    {
+        animalNameText.text = nombre;
+        StartCoroutine(OcultarNombreAnimal());
+    }
+
+    IEnumerator OcultarNombreAnimal()
+    {
+        yield return new WaitForSeconds(2f);
+        animalNameText.text = "";
     }
 }

@@ -906,7 +906,7 @@ MonoBehaviour:
     type: 3}
   moveActionJugador2: {fileID: -60679513924575961, guid: 3703d7147d5176941a91e3da47b85a0a,
     type: 3}
-  pointerSpeed: 500
+  pointerSpeed: 1000
 --- !u!1 &851632377
 GameObject:
   m_ObjectHideFlags: 0
