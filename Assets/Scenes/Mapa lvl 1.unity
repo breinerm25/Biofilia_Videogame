@@ -7919,9 +7919,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c59cf6477ba82884c928bf2fea58888b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animalDescription: Rana verde
   scoreValue: 10
+  nombreAnimal: 
   animalAudioSource: {fileID: 0}
+  fotografiado: 0
+  epica: 0
 --- !u!65 &412935700
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20013,9 +20015,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c59cf6477ba82884c928bf2fea58888b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animalDescription: Rana verde
   scoreValue: 10
+  nombreAnimal: 
   animalAudioSource: {fileID: 0}
+  fotografiado: 0
+  epica: 0
 --- !u!65 &706250358
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27400,9 +27404,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c59cf6477ba82884c928bf2fea58888b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animalDescription: Mariposa Azul
   scoreValue: 100
+  nombreAnimal: 
   animalAudioSource: {fileID: 0}
+  fotografiado: 0
+  epica: 0
 --- !u!65 &1066121460
 BoxCollider:
   m_ObjectHideFlags: 0

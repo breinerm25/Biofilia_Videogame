@@ -859,6 +859,7 @@ GameObject:
   - component: {fileID: 951641371}
   - component: {fileID: 951641370}
   - component: {fileID: 951641373}
+  - component: {fileID: 951641374}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -993,9 +994,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db083c65d918dec448b8f1e956f98a93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextSceneName: Nivel1-1Jugador
+  nextSceneName: Select cant jugadores
   transitionDuration: 0.5
   fadeCanvas: {fileID: 0}
+--- !u!114 &951641374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 951641368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a2358a7ff33fb4cb4228c434dcda9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &972065919
 GameObject:
   m_ObjectHideFlags: 0
