@@ -3,29 +3,25 @@ using Cinemachine;
 
 public class CambioDeCamara : MonoBehaviour
 {
-    private CinemachineVirtualCamera camaraAnterior; // ?? Cámara activa antes del cambio
-    public CinemachineVirtualCamera nuevaCamara; // ?? Cámara a activar en el trigger
+    public CinemachineVirtualCamera cameraA;
+    public CinemachineVirtualCamera cameraB;
+    public int highPriority = 10;
+    public int lowPriority = 1;
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player")) // ?? Solo cambia si el jugador entra
-        {
-            if (nuevaCamara != null)
-            {
-                camaraAnterior = CinemachineCore.Instance.GetActiveBrain(0).ActiveVirtualCamera as CinemachineVirtualCamera;
-                nuevaCamara.Priority = 20; // ?? Activa la nueva cámara con prioridad alta
-            }
-        }
-    }
-
-    void OnTriggerExit(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            if (camaraAnterior != null)
+            // Si cameraA está activa, cambia a cameraB
+            if (cameraA.Priority == highPriority)
             {
-                camaraAnterior.Priority = 20; // ?? Reactiva la cámara anterior
-                nuevaCamara.Priority = 10; // ?? Baja la prioridad de la nueva cámara
+                cameraA.Priority = lowPriority;
+                cameraB.Priority = highPriority;
+            }
+            else
+            {
+                cameraA.Priority = highPriority;
+                cameraB.Priority = lowPriority;
             }
         }
     }

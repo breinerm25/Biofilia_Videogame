@@ -11,7 +11,6 @@ public class HacerFotos : MonoBehaviour
     public LayerMask animalLayer;
     public RectTransform apuntador;
     public TextMeshProUGUI photosRemainingText;
-    public TextMeshProUGUI animalNameText; // Texto para mostrar el nombre del animal
     public InputActionReference shootAction;
     public AudioSource cameraSound;
     public static int totalScore = 0;
@@ -24,6 +23,12 @@ public class HacerFotos : MonoBehaviour
     public float rechargeTime = 5f;
     public float previewDuration = 2f;
 
+    // Miras
+    public GameObject MiraDefault;
+    public GameObject MiraMala;
+    public GameObject MiraBuena;
+    public GameObject MiraExcelente;
+
     private int photosRemaining;
     private bool canTakePhoto = true;
     private bool isReloading = false;
@@ -33,6 +38,7 @@ public class HacerFotos : MonoBehaviour
     {
         photosRemaining = maxPhotos;
         UpdateUI();
+        ActivarMira(MiraDefault);
     }
 
     void Update()
@@ -54,25 +60,22 @@ public class HacerFotos : MonoBehaviour
     {
         canTakePhoto = false;
         photosRemaining--;
+        ActivarMira(MiraMala);
 
         Animal animal = DetectarAnimal();
         if (animal != null)
         {
-            totalScore += EvaluarPuntaje(animal);
-
-            if (!animal.fotografiado) // Solo reproduce el audio la primera vez
-            {
-                animal.fotografiado = true;
-                animal.animalAudioSource?.Play();
-            }
-
-            MostrarNombreAnimal(animal.nombreAnimal);
+            totalScore += animal.scoreValue;
+            animal.fotografiado = true;
+            animal.animalAudioSource?.Play();
+            ActivarMira(animal.epica ? MiraExcelente : MiraBuena);
         }
 
         cameraSound?.Play();
         yield return CaptureScreenshot();
         UpdateUI();
         yield return new WaitForSeconds(photoCooldown);
+        ActivarMira(MiraDefault);
         canTakePhoto = true;
     }
 
@@ -96,16 +99,11 @@ public class HacerFotos : MonoBehaviour
         Ray ray = photoCamera.ScreenPointToRay(screenPos);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 20f, animalLayer))
+        if (Physics.Raycast(ray, out hit, 100f, animalLayer))
         {
             return hit.collider.GetComponent<Animal>();
         }
         return null;
-    }
-
-    int EvaluarPuntaje(Animal animal)
-    {
-        return animal.scoreValue;
     }
 
     void UpdateUI()
@@ -117,21 +115,14 @@ public class HacerFotos : MonoBehaviour
     IEnumerator CaptureScreenshot()
     {
         yield return new WaitForEndOfFrame();
-
-        // Desactivar la UI antes de la captura
         uiCanvas.enabled = false;
+        yield return new WaitForEndOfFrame();
 
-        yield return new WaitForEndOfFrame(); // Esperar un frame para asegurar que la UI desaparezca
-
-        // Capturar la pantalla sin la UI
         Texture2D fullScreenshot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
         fullScreenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
         fullScreenshot.Apply();
-
-        // Reactivar la UI después de la captura
         uiCanvas.enabled = true;
 
-        // Recortar el área de la mira
         Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(null, apuntador.position);
         int x = Mathf.Clamp((int)screenPos.x - (fotoSize / 2), 0, Screen.width - fotoSize);
         int y = Mathf.Clamp((int)screenPos.y - (fotoSize / 2), 0, Screen.height - fotoSize);
@@ -140,7 +131,7 @@ public class HacerFotos : MonoBehaviour
         croppedScreenshot.SetPixels(fullScreenshot.GetPixels(x, y, fotoSize, fotoSize));
         croppedScreenshot.Apply();
 
-        Destroy(fullScreenshot); // Liberar memoria
+        Destroy(fullScreenshot);
         MostrarFotoEnUI(croppedScreenshot);
     }
 
@@ -157,15 +148,12 @@ public class HacerFotos : MonoBehaviour
         previewCanvasGroup.alpha = 0;
     }
 
-    void MostrarNombreAnimal(string nombre)
+    void ActivarMira(GameObject mira)
     {
-        animalNameText.text = nombre;
-        StartCoroutine(OcultarNombreAnimal());
-    }
-
-    IEnumerator OcultarNombreAnimal()
-    {
-        yield return new WaitForSeconds(2f);
-        animalNameText.text = "";
+        MiraDefault.SetActive(false);
+        MiraMala.SetActive(false);
+        MiraBuena.SetActive(false);
+        MiraExcelente.SetActive(false);
+        mira.SetActive(true);
     }
 }

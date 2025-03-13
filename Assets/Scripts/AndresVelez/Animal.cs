@@ -6,6 +6,7 @@ public class Animal : MonoBehaviour
     public string nombreAnimal;
     public AudioSource animalAudioSource;
     public bool fotografiado = false;
+    public bool epica = false;
 }
 
 
