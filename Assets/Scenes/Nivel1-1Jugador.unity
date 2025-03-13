@@ -10744,7 +10744,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   apuntador: {fileID: 2100413718}
-  photosRemainingText: {fileID: 1818325921}
+  photosRemainingText: {fileID: 2136099030}
   shootAction: {fileID: 1231273011519507884, guid: 3703d7147d5176941a91e3da47b85a0a,
     type: 3}
   cameraSound: {fileID: 1740077843}
