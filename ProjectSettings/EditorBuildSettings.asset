@@ -15,11 +15,17 @@ EditorBuildSettings:
     path: Assets/Scenes/Mapa lvl 1.unity
     guid: ccc5b6334ec377b498ce4052ba9f1134
   - enabled: 1
-    path: Assets/Scenes/Nivel1-2Jugador.unity
-    guid: d40bb67f12a77a94493ee528eaa7492b
-  - enabled: 1
     path: Assets/Scenes/Nivel1-1Jugador.unity
     guid: de3b44411d0e67e4c91d0ee2669d655b
+  - enabled: 1
+    path: Assets/Scenes/Mapa.unity
+    guid: 476236f624ef0e64da87ff91703dc6e7
+  - enabled: 1
+    path: Assets/Scenes/Select cant jugadores.unity
+    guid: f1f77f71aa5fd5543a16b9a463b3e289
+  - enabled: 1
+    path: Assets/Scenes/Nivel1-2Jugadores.unity
+    guid: 84ec23ec9211f1948b23dc6c2b30f8fb
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 3703d7147d5176941a91e3da47b85a0a,
       type: 3}
