@@ -522209,20 +522209,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1218722235229192752
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8800245477167279386}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7f2bcf1873719e4abe70d5583c51e71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  trans: {fileID: 0}
-  transitionTime: 1
 --- !u!1 &1286059116471276449
 GameObject:
   m_ObjectHideFlags: 0
@@ -527617,7 +527603,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6644941602873646366}
-  - component: {fileID: 1218722235229192752}
   m_Layer: 0
   m_Name: Level loader
   m_TagString: Untagged
