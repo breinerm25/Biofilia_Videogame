@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using TMPro;
@@ -23,6 +23,7 @@ public class HacerFotos : MonoBehaviour
     public float rechargeTime = 1f; // Tiempo de recarga reducido
     public float previewDuration = 2f;
     public int fotoSize = 200;
+    public float rangoRaycast = 10f;
 
     public GameObject MiraDefault;
     public GameObject MiraMala;
@@ -48,10 +49,12 @@ public class HacerFotos : MonoBehaviour
             {
                 StartCoroutine(TakePhoto());
             }
-            else if (!isReloading)
-            {
-                StartCoroutine(RecargarFotos());
-            }
+        }
+
+        // 🚀 Si se acaban las fotos, iniciar la recarga automáticamente
+        if (photosRemaining == 0 && !isReloading)
+        {
+            StartCoroutine(RecargarFotos());
         }
     }
 
@@ -64,9 +67,20 @@ public class HacerFotos : MonoBehaviour
         Animal animal = DetectarAnimal();
         if (animal != null)
         {
+            // 🔥 Sumar puntos siempre, sin importar si ya fue fotografiado antes
             totalScore += animal.scoreValue;
-            animal.fotografiado = true;
-            animal.animalAudioSource?.Play();
+
+            // 🔊 Reproducir audio solo la primera vez que se le toma foto
+            if (!animal.fotografiado)
+            {
+                animal.fotografiado = true;
+                if (animal.animalAudioSource != null)
+                {
+                    animal.animalAudioSource.Play();
+                }
+            }
+
+            // 🔥 Cambiar la mira cada vez que se le toma foto
             ActivarMira(animal.epica ? MiraExcelente : MiraBuena);
         }
 
@@ -78,18 +92,19 @@ public class HacerFotos : MonoBehaviour
         canTakePhoto = true;
     }
 
+
     IEnumerator RecargarFotos()
     {
         isReloading = true;
         canTakePhoto = false;
-        Debug.Log("? Recargando fotos...");
+        Debug.Log("⚡ Recargando fotos...");
 
         yield return new WaitForSecondsRealtime(rechargeTime);
 
-        photosRemaining = maxPhotos; // ?? AHORA SE ACTUALIZA BIEN
+        photosRemaining = maxPhotos; // 🔥 AHORA SE ACTUALIZA BIEN
         UpdateUI();
 
-        Debug.Log($"? Recarga completa. Fotos disponibles: {photosRemaining}");
+        Debug.Log($"✅ Recarga completa. Fotos disponibles: {photosRemaining}");
 
         isReloading = false;
         canTakePhoto = true;
@@ -101,7 +116,8 @@ public class HacerFotos : MonoBehaviour
         Ray ray = photoCamera.ScreenPointToRay(screenPos);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 100f, animalLayer))
+        // 🔥 Usar el rango configurable en el Inspector
+        if (Physics.Raycast(ray, out hit, rangoRaycast, animalLayer))
         {
             return hit.collider.GetComponent<Animal>();
         }
@@ -112,7 +128,7 @@ public class HacerFotos : MonoBehaviour
     {
         photosRemainingText.text = $"{photosRemaining}";
         scoreText.text = $"{totalScore}";
-        Debug.Log($"?? UI Actualizada - Fotos restantes: {photosRemaining}");
+        Debug.Log($"📸 UI Actualizada - Fotos restantes: {photosRemaining}");
     }
 
     IEnumerator CaptureScreenshot()
@@ -121,22 +137,41 @@ public class HacerFotos : MonoBehaviour
         uiCanvas.enabled = false;
         yield return new WaitForEndOfFrame();
 
+        // 📸 Tomar captura de pantalla completa
         Texture2D fullScreenshot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
         fullScreenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
         fullScreenshot.Apply();
         uiCanvas.enabled = true;
 
+        // 🖼 Obtener la posición de la mira en pantalla
         Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(null, apuntador.position);
-        int x = Mathf.Clamp((int)screenPos.x - (fotoSize / 2), 0, Screen.width - fotoSize);
-        int y = Mathf.Clamp((int)screenPos.y - (fotoSize / 2), 0, Screen.height - fotoSize);
 
-        Texture2D croppedScreenshot = new Texture2D(fotoSize, fotoSize);
-        croppedScreenshot.SetPixels(fullScreenshot.GetPixels(x, y, fotoSize, fotoSize));
+        // 📏 Limitar valores para evitar errores de acceso a memoria
+        int x = Mathf.Clamp((int)screenPos.x - (fotoSize / 2), 0, Screen.width);
+        int y = Mathf.Clamp((int)screenPos.y - (fotoSize / 2), 0, Screen.height);
+
+        // 📌 Ajustar tamaño de recorte si estamos cerca de los bordes
+        int safeWidth = Mathf.Min(fotoSize, Screen.width - x);
+        int safeHeight = Mathf.Min(fotoSize, Screen.height - y);
+
+        // 🛠 Verificar que el tamaño de recorte es válido
+        if (safeWidth <= 0 || safeHeight <= 0)
+        {
+            Debug.LogWarning("No se pudo capturar la imagen: fuera de los límites de la pantalla.");
+            Destroy(fullScreenshot);
+            yield break;
+        }
+
+        // ✂️ Recortar la imagen sin errores
+        Texture2D croppedScreenshot = new Texture2D(safeWidth, safeHeight);
+        croppedScreenshot.SetPixels(fullScreenshot.GetPixels(x, y, safeWidth, safeHeight));
         croppedScreenshot.Apply();
 
         Destroy(fullScreenshot);
         MostrarFotoEnUI(croppedScreenshot);
     }
+
+
 
     void MostrarFotoEnUI(Texture2D foto)
     {
