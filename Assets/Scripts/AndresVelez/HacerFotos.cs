@@ -6,30 +6,39 @@ using UnityEngine.InputSystem;
 
 public class HacerFotos : MonoBehaviour
 {
-    public int jugadorID = 1; // Se configura en el Inspector (Jugador 1 o Jugador 2)
+    public int jugadorID = 1;
     public Camera photoCamera;
     public LayerMask animalLayer;
     public RectTransform apuntador;
     public TextMeshProUGUI photosRemainingText;
     public InputActionReference shootAction;
     public AudioSource cameraSound;
-    public static int totalScore = 0; // Puntaje compartido para ambos jugadores
+    public static int totalScore = 0;
     public TextMeshProUGUI scoreText;
-    public Image previewImage; // Imagen para mostrar la foto tomada
+    public Image previewImage;
     public CanvasGroup previewCanvasGroup;
+    public Canvas uiCanvas; // Referencia al Canvas de la UI
     public int maxPhotos = 7;
     public float photoCooldown = 1.5f;
     public float rechargeTime = 5f;
-    public float previewDuration = 2f; // Duración de la imagen en pantalla
+    public float previewDuration = 2f;
 
-    private int photosRemaining; // Independiente para cada jugador
-    private bool canTakePhoto = true; // Independiente para cada jugador
-    private bool isReloading = false; // Independiente para cada jugador
+    // Miras
+    public GameObject MiraDefault;
+    public GameObject MiraMala;
+    public GameObject MiraBuena;
+    public GameObject MiraExcelente;
+
+    private int photosRemaining;
+    private bool canTakePhoto = true;
+    private bool isReloading = false;
+    private int fotoSize = 200;
 
     void Start()
     {
-        photosRemaining = maxPhotos; // Cada jugador empieza con su cantidad de fotos
+        photosRemaining = maxPhotos;
         UpdateUI();
+        ActivarMira(MiraDefault);
     }
 
     void Update()
@@ -50,18 +59,23 @@ public class HacerFotos : MonoBehaviour
     IEnumerator TakePhoto()
     {
         canTakePhoto = false;
-        photosRemaining--; // Solo se reduce para este jugador
+        photosRemaining--;
+        ActivarMira(MiraMala);
 
         Animal animal = DetectarAnimal();
         if (animal != null)
         {
-            totalScore += EvaluarPuntaje(animal);
+            totalScore += animal.scoreValue;
+            animal.fotografiado = true;
+            animal.animalAudioSource?.Play();
+            ActivarMira(animal.epica ? MiraExcelente : MiraBuena);
         }
 
         cameraSound?.Play();
-        yield return CaptureScreenshot(); // Captura la foto
+        yield return CaptureScreenshot();
         UpdateUI();
         yield return new WaitForSeconds(photoCooldown);
+        ActivarMira(MiraDefault);
         canTakePhoto = true;
     }
 
@@ -92,14 +106,6 @@ public class HacerFotos : MonoBehaviour
         return null;
     }
 
-    int EvaluarPuntaje(Animal animal)
-    {
-        float distancia = Vector3.Distance(apuntador.position, Camera.main.WorldToScreenPoint(animal.transform.position));
-        if (distancia < 20f) return animal.scoreValue * 2;
-        if (distancia < 50f) return animal.scoreValue;
-        return 0;
-    }
-
     void UpdateUI()
     {
         photosRemainingText.text = $"Jugador {jugadorID} - Fotos: {photosRemaining}";
@@ -109,20 +115,24 @@ public class HacerFotos : MonoBehaviour
     IEnumerator CaptureScreenshot()
     {
         yield return new WaitForEndOfFrame();
-        RenderTexture rt = new RenderTexture(Screen.width, Screen.height, 24);
-        photoCamera.targetTexture = rt;
-        photoCamera.Render();
+        uiCanvas.enabled = false;
+        yield return new WaitForEndOfFrame();
 
-        Texture2D screenShot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-        RenderTexture.active = rt;
-        screenShot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-        screenShot.Apply();
+        Texture2D fullScreenshot = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+        fullScreenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        fullScreenshot.Apply();
+        uiCanvas.enabled = true;
 
-        photoCamera.targetTexture = null;
-        RenderTexture.active = null;
-        Destroy(rt);
+        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(null, apuntador.position);
+        int x = Mathf.Clamp((int)screenPos.x - (fotoSize / 2), 0, Screen.width - fotoSize);
+        int y = Mathf.Clamp((int)screenPos.y - (fotoSize / 2), 0, Screen.height - fotoSize);
 
-        MostrarFotoEnUI(screenShot);
+        Texture2D croppedScreenshot = new Texture2D(fotoSize, fotoSize);
+        croppedScreenshot.SetPixels(fullScreenshot.GetPixels(x, y, fotoSize, fotoSize));
+        croppedScreenshot.Apply();
+
+        Destroy(fullScreenshot);
+        MostrarFotoEnUI(croppedScreenshot);
     }
 
     void MostrarFotoEnUI(Texture2D foto)
@@ -136,5 +146,14 @@ public class HacerFotos : MonoBehaviour
         previewCanvasGroup.alpha = 1;
         yield return new WaitForSeconds(previewDuration);
         previewCanvasGroup.alpha = 0;
+    }
+
+    void ActivarMira(GameObject mira)
+    {
+        MiraDefault.SetActive(false);
+        MiraMala.SetActive(false);
+        MiraBuena.SetActive(false);
+        MiraExcelente.SetActive(false);
+        mira.SetActive(true);
     }
 }
