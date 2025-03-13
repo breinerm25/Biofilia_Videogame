@@ -17,13 +17,13 @@ public class HacerFotos : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public Image previewImage;
     public CanvasGroup previewCanvasGroup;
-    public Canvas uiCanvas; // Referencia al Canvas de la UI
+    public Canvas uiCanvas;
     public int maxPhotos = 7;
     public float photoCooldown = 1.5f;
-    public float rechargeTime = 5f;
+    public float rechargeTime = 1f; // Tiempo de recarga reducido
     public float previewDuration = 2f;
+    public int fotoSize = 200;
 
-    // Miras
     public GameObject MiraDefault;
     public GameObject MiraMala;
     public GameObject MiraBuena;
@@ -32,7 +32,6 @@ public class HacerFotos : MonoBehaviour
     private int photosRemaining;
     private bool canTakePhoto = true;
     private bool isReloading = false;
-    private int fotoSize = 200;
 
     void Start()
     {
@@ -43,13 +42,13 @@ public class HacerFotos : MonoBehaviour
 
     void Update()
     {
-        if (shootAction.action.WasPressedThisFrame() && canTakePhoto && !isReloading)
+        if (shootAction.action.WasPressedThisFrame() && canTakePhoto)
         {
             if (photosRemaining > 0)
             {
                 StartCoroutine(TakePhoto());
             }
-            else
+            else if (!isReloading)
             {
                 StartCoroutine(RecargarFotos());
             }
@@ -81,16 +80,19 @@ public class HacerFotos : MonoBehaviour
 
     IEnumerator RecargarFotos()
     {
-        if (isReloading) yield break;
         isReloading = true;
         canTakePhoto = false;
+        Debug.Log("? Recargando fotos...");
 
-        yield return new WaitForSeconds(rechargeTime);
+        yield return new WaitForSecondsRealtime(rechargeTime);
 
-        photosRemaining = maxPhotos;
+        photosRemaining = maxPhotos; // ?? AHORA SE ACTUALIZA BIEN
         UpdateUI();
-        canTakePhoto = true;
+
+        Debug.Log($"? Recarga completa. Fotos disponibles: {photosRemaining}");
+
         isReloading = false;
+        canTakePhoto = true;
     }
 
     Animal DetectarAnimal()
@@ -108,8 +110,9 @@ public class HacerFotos : MonoBehaviour
 
     void UpdateUI()
     {
-        photosRemainingText.text = $"Jugador {jugadorID} - Fotos: {photosRemaining}";
-        scoreText.text = $"Puntos: {totalScore}";
+        photosRemainingText.text = $"{photosRemaining}";
+        scoreText.text = $"{totalScore}";
+        Debug.Log($"?? UI Actualizada - Fotos restantes: {photosRemaining}");
     }
 
     IEnumerator CaptureScreenshot()
