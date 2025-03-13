@@ -1027,7 +1027,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -59.000244, y: 25.999939}
+  m_AnchoredPosition: {x: -59.000244, y: 26}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &292087900
@@ -9725,7 +9725,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1818325921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10744,7 +10744,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   apuntador: {fileID: 2100413718}
-  photosRemainingText: {fileID: 2136099030}
+  photosRemainingText: {fileID: 1818325921}
   shootAction: {fileID: 1231273011519507884, guid: 3703d7147d5176941a91e3da47b85a0a,
     type: 3}
   cameraSound: {fileID: 1740077843}

@@ -41735,8 +41735,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popUpDuration: 1
-  popUpScaleX: 1.6
-  popUpScaleY: 1.9
+  initialScale: 0.3
+  finalScaleX: 1.6
+  finalScaleY: 1.9
   floatDistance: 18
   floatDuration: 0.7
 --- !u!1001 &187268536
@@ -522395,8 +522396,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5946841101773952505}
-        m_TargetAssemblyTypeName: SceneTransition, Assembly-CSharp
-        m_MethodName: StartTransition
+        m_TargetAssemblyTypeName: SceneTransitionwEffec, Assembly-CSharp
+        m_MethodName: LoadNextScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
