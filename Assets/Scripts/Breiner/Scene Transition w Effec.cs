@@ -58,8 +58,9 @@ public class SceneTransitionwEffec : MonoBehaviour
             .OnComplete(() => LoadNextScene());
     }
 
-    private void LoadNextScene()
+    public void LoadNextScene()
     {
+        DOTween.Clear(true);
         if (!string.IsNullOrEmpty(nextSceneName))
         {
             SceneManager.LoadScene(nextSceneName);

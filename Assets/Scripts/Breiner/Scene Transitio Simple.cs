@@ -28,6 +28,7 @@ public class SceneTransitioSimple : MonoBehaviour
 
     private void LoadNextScene()
     {
+        DOTween.Clear(true);
         if (!string.IsNullOrEmpty(nextSceneName))
         {
             SceneManager.LoadScene(nextSceneName);
