@@ -1119,7 +1119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db083c65d918dec448b8f1e956f98a93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextSceneName: Nivel1-2Jugador UI
+  nextSceneName: Nivel1-2Jugadores
   transitionDuration: 0.5
   fadeCanvas: {fileID: 1244896080}
 --- !u!114 &1644384124
