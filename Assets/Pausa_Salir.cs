@@ -38,6 +38,7 @@ public class Pausa_Salir : MonoBehaviour
     {
         isPaused = true;
         Time.timeScale = 0f;
+        AudioListener.pause = true; // Pausar todos los audios
         pauseMenu.SetActive(true);
     }
 
@@ -45,6 +46,7 @@ public class Pausa_Salir : MonoBehaviour
     {
         isPaused = false;
         Time.timeScale = 1f;
+        AudioListener.pause = false; // Reanudar todos los audios
         pauseMenu.SetActive(false);
     }
 
