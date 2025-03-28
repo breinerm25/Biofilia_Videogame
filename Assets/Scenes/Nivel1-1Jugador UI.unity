@@ -5729,6 +5729,7 @@ MonoBehaviour:
   rechargeTime: 3
   previewDuration: 2
   fotoSize: 200
+  rangoRaycast: 10
   MiraDefault: {fileID: 851632377}
   MiraMala: {fileID: 3803325}
   MiraBuena: {fileID: 1751107175}
