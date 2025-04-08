@@ -90,7 +90,7 @@
             ]
         },
         {
-            "name": "Gameplay",
+            "name": "Pausa",
             "id": "90152ed8-33f4-4a08-b2ef-d7445df8e518",
             "actions": [
                 {
@@ -112,6 +112,54 @@
                     "processors": "",
                     "groups": ";Jugador1",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Gameplay",
+            "id": "de71f45b-08fa-4951-abc5-d6ab59985f9c",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "581b7905-df71-438e-869b-a9cc5467e745",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Shoot",
+                    "type": "Button",
+                    "id": "8a679d97-a56d-41f5-a9d1-8f748bcf8453",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0e88d855-a612-4bcb-9567-1182ef17f181",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "05d239b1-ef70-4860-899d-8234935c360c",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
