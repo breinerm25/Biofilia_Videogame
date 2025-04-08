@@ -1419,11 +1419,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canva: {fileID: 1202248915}
-  photosRemainingText1: {fileID: 0}
+  photosRemainingText1: {fileID: 2136099030}
   photosRemainingText2: {fileID: 0}
-  previewImage1: {fileID: 0}
+  previewImage1: {fileID: 1019374855}
   previewImage2: {fileID: 0}
-  previewCanvasGroup1: {fileID: 0}
+  previewCanvasGroup1: {fileID: 304606672}
   previewCanvasGroup2: {fileID: 0}
   cameraSound: {fileID: 1740077843}
   totalScore: 0
@@ -1491,7 +1491,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60.000004
+  field of view: 60.641678
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1517,8 +1517,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 933537454}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.016737828, y: 0.40940347, z: 0.0075123427, w: 0.912169}
-  m_LocalPosition: {x: -24.01, y: 7.182129, z: 49.6}
+  m_LocalRotation: {x: -0.01824598, y: -0.71901804, z: -0.018890252, w: 0.6944951}
+  m_LocalPosition: {x: 13.6687975, y: 4.3900003, z: -12.640942}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
